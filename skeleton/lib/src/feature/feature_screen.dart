@@ -8,6 +8,8 @@ import '../themes/colors.dart';
 import '../themes/dashed_line.dart';
 import 'academy_transcript/academy_transcript_screen.dart';
 import 'class/class_screen.dart';
+import 'exam_schedule/exam_schedule_screen.dart';
+import 'notification/notification_screen.dart';
 
 class FeatureScreen extends StatefulWidget {
   const FeatureScreen({Key? key}) : super(key: key);
@@ -160,8 +162,10 @@ class _FeatureState extends State<FeatureScreen> {
                   color: MGColors.grey,
                 ),
                 onTap: () {
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (_) => AcademyTranscriptScreen()));
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (_) => AcademyTranscriptScreen()));
                 },
               ),
               ListTile(
@@ -179,7 +183,10 @@ class _FeatureState extends State<FeatureScreen> {
                   Icons.arrow_forward_ios,
                   color: MGColors.grey,
                 ),
-                onTap: () {},
+                onTap: () {
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (_) => ExamScheduleScreen()));
+                },
               ),
               SizedBox(
                 height: 20,
@@ -206,7 +213,10 @@ class _FeatureState extends State<FeatureScreen> {
                   Icons.arrow_forward_ios,
                   color: MGColors.grey,
                 ),
-                onTap: () {},
+                onTap: () {
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (_) => NotificationScreen()));
+                },
               ),
               ListTile(
                 contentPadding: EdgeInsets.all(0),
