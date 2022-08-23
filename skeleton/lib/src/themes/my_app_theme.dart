@@ -99,4 +99,12 @@ extension CustomTextTheme on TextTheme {
       color: Colors.red,
     );
   }
+
+  TextStyle get textStyle16Grey {
+    return TextStyle(
+      fontSize: 16,
+      fontWeight: FontWeight.w400,
+      color: MGColors.grey,
+    );
+  }
 }

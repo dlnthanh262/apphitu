@@ -1,12 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:provider/provider.dart';
-import 'package:skeleton/src/feature/profile/viewmodel/profile_viewmodel.dart';
 import 'package:skeleton/src/model/schedule.dart';
 import 'package:skeleton/src/themes/my_app_theme.dart';
 
-import '../../themes/colors.dart';
-import '../../themes/screen_utils.dart';
+import '../../../themes/colors.dart';
 
 class ScheduleDetailScreen extends StatefulWidget {
   const ScheduleDetailScreen({Key? key, required this.schedule})
@@ -18,7 +15,6 @@ class ScheduleDetailScreen extends StatefulWidget {
 }
 
 class _ScheduleDetailState extends State<ScheduleDetailScreen> {
-  late ProfileViewModel _profileViewModel;
   final Schedule schedule;
 
   _ScheduleDetailState(this.schedule);

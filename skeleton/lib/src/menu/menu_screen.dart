@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:skeleton/src/feature/feature_screen.dart';
-import 'package:skeleton/src/schedule/schedule_screen.dart';
 import 'package:skeleton/src/themes/app_icons.dart';
 import 'package:skeleton/src/themes/colors.dart';
 import 'package:skeleton/src/themes/my_app_theme.dart';
 
+import '../feature/schedule/schedule_screen.dart';
 import '../home/home_screen.dart';
 
 class MenuScreen extends StatefulWidget {

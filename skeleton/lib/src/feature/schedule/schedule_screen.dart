@@ -3,12 +3,12 @@ import 'dart:collection';
 import 'package:flutter/material.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
+import 'package:skeleton/src/feature/schedule/viewmodel/schedule_viewmodel.dart';
 import 'package:skeleton/src/model/schedule.dart';
-import 'package:skeleton/src/schedule/schedule_detail/schedule_detail_screen.dart';
-import 'package:skeleton/src/schedule/viewmodel/schedule_viewmodel.dart';
 import 'package:skeleton/src/themes/my_app_theme.dart';
 import 'package:table_calendar/table_calendar.dart';
-import '../themes/colors.dart';
+import 'schedule_detail/schedule_detail_screen.dart';
+import '../../themes/colors.dart';
 
 class ScheduleScreen extends StatefulWidget {
   const ScheduleScreen({Key? key}) : super(key: key);

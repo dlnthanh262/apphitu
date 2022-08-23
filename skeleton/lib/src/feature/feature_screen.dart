@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:skeleton/src/feature/profile/profile_screen.dart';
-import 'package:skeleton/src/schedule/schedule_screen.dart';
+import 'package:skeleton/src/feature/schedule/schedule_screen.dart';
 import 'package:skeleton/src/themes/my_app_theme.dart';
 import '../themes/app_icons.dart';
 import '../themes/colors.dart';
 import '../themes/dashed_line.dart';
+import 'academy_transcript/academy_transcript_screen.dart';
+import 'class/class_screen.dart';
 
 class FeatureScreen extends StatefulWidget {
   const FeatureScreen({Key? key}) : super(key: key);
@@ -137,7 +139,10 @@ class _FeatureState extends State<FeatureScreen> {
                   Icons.arrow_forward_ios,
                   color: MGColors.grey,
                 ),
-                onTap: () {},
+                onTap: () {
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (_) => ClassScreen()));
+                },
               ),
               ListTile(
                 contentPadding: EdgeInsets.all(0),
@@ -154,7 +159,10 @@ class _FeatureState extends State<FeatureScreen> {
                   Icons.arrow_forward_ios,
                   color: MGColors.grey,
                 ),
-                onTap: () {},
+                onTap: () {
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (_) => AcademyTranscriptScreen()));
+                },
               ),
               ListTile(
                 contentPadding: EdgeInsets.all(0),
