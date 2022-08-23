@@ -12,4 +12,5 @@ class MGColors {
   static Color white = const Color(0xFFFFFFFF);
   static Color grey = const Color(0xFF888888);
   static Color lightGrey = const Color(0xFFAAAAAA);
+  static Color red = const Color(0xFFFE2836);
 }

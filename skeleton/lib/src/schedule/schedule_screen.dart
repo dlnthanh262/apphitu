@@ -3,8 +3,8 @@ import 'dart:collection';
 import 'package:flutter/material.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
-import 'package:provider/provider.dart';
 import 'package:skeleton/src/model/schedule.dart';
+import 'package:skeleton/src/schedule/schedule_detail/schedule_detail_screen.dart';
 import 'package:skeleton/src/schedule/viewmodel/schedule_viewmodel.dart';
 import 'package:skeleton/src/themes/my_app_theme.dart';
 import 'package:table_calendar/table_calendar.dart';
@@ -30,6 +30,11 @@ class _ScheduleState extends State<ScheduleScreen> {
   DateTime? _rangeStart;
   DateTime? _rangeEnd;
   late final ValueNotifier<List<Schedule>> _selectedSchedules;
+  LinkedHashMap<DateTime, List<Schedule>> kSchedules =
+      LinkedHashMap<DateTime, List<Schedule>>(
+    equals: isSameDay,
+    hashCode: getHashCode,
+  );
 
   @override
   void initState() {
@@ -37,6 +42,7 @@ class _ScheduleState extends State<ScheduleScreen> {
     _scheduleViewModel.fetchData();
     _selectedDay = _focusedDay;
     _selectedSchedules = ValueNotifier(_getSchedulesForDay(_selectedDay!));
+    kSchedules.addAll(generateKScheduleSource());
     super.initState();
   }
 
@@ -47,12 +53,10 @@ class _ScheduleState extends State<ScheduleScreen> {
   }
 
   List<Schedule> _getSchedulesForDay(DateTime day) {
-    // Implementation example
     return kSchedules[day] ?? [];
   }
 
   List<Schedule> _getSchedulesForRange(DateTime start, DateTime end) {
-    // Implementation example
     final days = daysInRange(start, end);
 
     return [
@@ -65,7 +69,7 @@ class _ScheduleState extends State<ScheduleScreen> {
       setState(() {
         _selectedDay = selectedDay;
         _focusedDay = focusedDay;
-        _rangeStart = null; // Important to clean those
+        _rangeStart = null;
         _rangeEnd = null;
         _rangeSelectionMode = RangeSelectionMode.toggledOff;
       });
@@ -83,7 +87,6 @@ class _ScheduleState extends State<ScheduleScreen> {
       _rangeSelectionMode = RangeSelectionMode.toggledOn;
     });
 
-    // `start` or `end` could be null
     if (start != null && end != null) {
       _selectedSchedules.value = _getSchedulesForRange(start, end);
     } else if (start != null) {
@@ -104,20 +107,6 @@ class _ScheduleState extends State<ScheduleScreen> {
             icon: Icon(Icons.arrow_back, color: MGColors.kMainColor),
             onPressed: () => Navigator.of(context).pop(),
           ),
-          bottom: TabBar(
-            isScrollable: true,
-            onTap: (index) {},
-            tabs: [
-              Tab(
-                child: Text("Ngày",
-                    style: Theme.of(context).textTheme.textStyle16),
-              ),
-              Tab(
-                child: Text("Tuần",
-                    style: Theme.of(context).textTheme.textStyle16),
-              ),
-            ],
-          ),
           title: Text(
             "Thời khoá biểu",
             style: Theme.of(context).textTheme.textStyle18,
@@ -125,9 +114,7 @@ class _ScheduleState extends State<ScheduleScreen> {
           centerTitle: true,
           backgroundColor: Theme.of(context).canvasColor,
         ),
-        body: TabBarView(
-          children: [buildDayTab(), buildWeekTab()],
-        ),
+        body: buildDayTab(),
       ),
     );
   }
@@ -137,6 +124,7 @@ class _ScheduleState extends State<ScheduleScreen> {
     return Column(
       children: [
         TableCalendar<Schedule>(
+          locale: "vi",
           firstDay: kFirstDay,
           lastDay: kLastDay,
           focusedDay: _focusedDay,
@@ -147,12 +135,24 @@ class _ScheduleState extends State<ScheduleScreen> {
           rangeSelectionMode: _rangeSelectionMode,
           eventLoader: _getSchedulesForDay,
           startingDayOfWeek: StartingDayOfWeek.monday,
-          calendarStyle: CalendarStyle(
-            // Use `CalendarStyle` to customize the UI
+          calendarStyle: const CalendarStyle(
             outsideDaysVisible: false,
+            markerDecoration:
+                BoxDecoration(color: Colors.blue, shape: BoxShape.circle),
+            selectedDecoration:
+                BoxDecoration(color: Color(0xFFBBDDFF), shape: BoxShape.circle),
+            selectedTextStyle: TextStyle(
+                color: Colors.black,
+                fontSize: 16.0,
+                fontWeight: FontWeight.bold),
           ),
           onDaySelected: _onDaySelected,
           onRangeSelected: _onRangeSelected,
+          availableCalendarFormats: const {
+            CalendarFormat.month: 'Tuần',
+            CalendarFormat.twoWeeks: 'Tháng',
+            CalendarFormat.week: '2 Tuần'
+          },
           onFormatChanged: (format) {
             if (_calendarFormat != format) {
               setState(() {
@@ -163,6 +163,9 @@ class _ScheduleState extends State<ScheduleScreen> {
           onPageChanged: (focusedDay) {
             _focusedDay = focusedDay;
           },
+        ),
+        Divider(
+          color: MGColors.grey,
         ),
         const SizedBox(height: 8.0),
         Expanded(
@@ -177,50 +180,83 @@ class _ScheduleState extends State<ScheduleScreen> {
                       horizontal: 12.0,
                       vertical: 4.0,
                     ),
-                    decoration: BoxDecoration(
-                      border: Border.all(),
-                      borderRadius: BorderRadius.circular(12.0),
-                    ),
-                    child: Column(children: [
-                      Text('${value[index].day}'),
-                      ListTile(
-                        onTap: () => {},
-                        leading: Column(
-                          children: [
-                            Text('Tiết',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .textStyle16SemiBold),
-                            Text(
-                                '${value[index].from_lession}-${value[index].from_lession + value[index].lession_number}',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .textStyle16SemiBold)
-                          ],
-                        ),
-                        title: Text(
-                          '${value[index].subject_code} - ${value[index].subject_name}',
-                          style:
-                              Theme.of(context).textTheme.textStyle16SemiBold,
-                        ),
-                        subtitle: Column(
-                          children: [
-                            Row(
+                    child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          ListTile(
+                            onTap: () => {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (_) => ScheduleDetailScreen(
+                                          schedule: value[index])))
+                            },
+                            leading: Column(
                               children: [
-                                Icon(Icons.location_on_outlined),
-                                Text('Phòng: ${value[index].room_code}')
+                                Text('Tiết',
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .textStyle16SemiBold),
+                                Text(
+                                    '${value[index].from_lession}-${value[index].from_lession + value[index].lession_number}',
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .textStyle16SemiBold)
                               ],
                             ),
-                            Row(
-                              children: [
-                                Icon(Icons.class_outlined),
-                                Text('Lớp: ${value[index].class_code}')
-                              ],
-                            )
-                          ],
-                        ),
-                      ),
-                    ]),
+                            title: Text(
+                              '${value[index].subject_code} - ${value[index].subject_name}',
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .textStyle16SemiBold,
+                            ),
+                            subtitle: Padding(
+                              padding: const EdgeInsets.only(top: 5),
+                              child: Column(
+                                children: [
+                                  Row(
+                                    children: [
+                                      const Icon(
+                                        Icons.location_on_outlined,
+                                        size: 15,
+                                      ),
+                                      const SizedBox(
+                                        width: 10,
+                                      ),
+                                      Text(
+                                        'Phòng: ${value[index].room_code}',
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .textStyle15,
+                                      )
+                                    ],
+                                  ),
+                                  Row(
+                                    children: [
+                                      const Icon(
+                                        Icons.class_outlined,
+                                        size: 15,
+                                      ),
+                                      const SizedBox(
+                                        width: 10,
+                                      ),
+                                      Text('Lớp: ${value[index].class_code}',
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .textStyle15)
+                                    ],
+                                  )
+                                ],
+                              ),
+                            ),
+                          ),
+                          const SizedBox(
+                            height: 8,
+                          ),
+                          Divider(
+                            color: MGColors.grey,
+                          ),
+                        ]),
                   );
                 },
               );
@@ -228,46 +264,6 @@ class _ScheduleState extends State<ScheduleScreen> {
           ),
         ),
       ],
-    );
-  }
-
-  Widget buildWeekTab() {
-    return SingleChildScrollView(
-      child: Column(
-        children: [
-          TableCalendar(
-            firstDay: kFirstDay,
-            lastDay: kLastDay,
-            focusedDay: _focusedDay,
-            calendarFormat: _calendarFormat,
-            selectedDayPredicate: (day) {
-              return isSameDay(_selectedDay, day);
-            },
-            onDaySelected: (selectedDay, focusedDay) {
-              if (!isSameDay(_selectedDay, selectedDay)) {
-                // Call `setState()` when updating the selected day
-                setState(() {
-                  _selectedDay = selectedDay;
-                  _focusedDay = focusedDay;
-                });
-              }
-            },
-            onFormatChanged: (format) {
-              if (_calendarFormat != format) {
-                // Call `setState()` when updating calendar format
-                setState(() {
-                  _calendarFormat = format;
-                });
-              }
-            },
-            onPageChanged: (focusedDay) {
-              // No need to call `setState()` here
-              _focusedDay = focusedDay;
-            },
-            // Enable week numbers (disabled by default).
-          ),
-        ],
-      ),
     );
   }
 }
