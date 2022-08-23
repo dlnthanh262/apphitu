@@ -9,6 +9,7 @@ import '../themes/dashed_line.dart';
 import 'academy_transcript/academy_transcript_screen.dart';
 import 'class/class_screen.dart';
 import 'exam_schedule/exam_schedule_screen.dart';
+import 'medical_declaration/medical_declaration_screen.dart';
 import 'notification/notification_screen.dart';
 
 class FeatureScreen extends StatefulWidget {
@@ -233,7 +234,12 @@ class _FeatureState extends State<FeatureScreen> {
                   Icons.arrow_forward_ios,
                   color: MGColors.grey,
                 ),
-                onTap: () {},
+                onTap: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (_) => MedicalDeclarationScreen()));
+                },
               ),
               ListTile(
                 contentPadding: EdgeInsets.all(0),
